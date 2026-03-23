@@ -1,0 +1,19 @@
+version: '3'
+services:
+  webserver:
+    image: image_name
+    ports:
+      - 62030:62030/udp #First value is the host port and second is the container
+      - 50000:50000/udp
+
+    networks:
+      network1:
+        ipv4_address: x.x.x.x #Update to the address you require or remove line to use dhcp
+    
+    restart: always
+    
+
+networks:
+  network1: #A arbitary network name to refer to withtin each fo the services
+    name: docnet #Name of the pre-configured network
+    external: true

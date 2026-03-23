@@ -1,0 +1,97 @@
+#!/bin/bash
+# HB_Bridge.py / HIPSC_Bridge star/stop/reset script
+# by Vance - w6ss@dx40.com 07/31/2017
+# Added null to stdout and stderr 08/18/2017
+
+# Function ip 
+ip() {
+  PROGDIR='/opt/dmrlink/bridge'
+  PROGNAME='./IPSC_Bridge.py'
+  exescript $1 $2
+  }
+# End function ip
+
+# Function hb 
+hb() {
+  PROGDIR='/opt/hblink'
+  PROGNAME='./HB_Bridge.py'
+  exescript $1 $2
+  }
+# End function hb
+  
+# Function exescript to execute programs  
+exescript() {
+cd $PROGDIR
+PID=`ps -eaf | grep $PROGNAME | grep -v "grep" | awk '{print $2}'`
+if [ "$1" = "start" ] ; then
+	if [ "" = "$PID" ] ; then
+	    $PROGNAME > /dev/null 2>&1 &
+            sleep 1
+	    PID=`ps -eaf | grep $PROGNAME | grep -v "grep" | awk '{print $2}'`
+        echo "$PROGNAME was started PID=$PID"
+    else 
+        echo "$PROGNAME is already running PID=$PID" 
+	fi
+elif [ "$1" = "stop" ] ; then
+     if [ "" != "$PID" ] ; then
+        echo "Stopping  $PID"
+	    kill -12 $PID
+            sleep 1
+	    PID=`ps -eaf | grep $PROGNAME | grep -v "grep" | awk '{print $2}'`
+        echo "$PROGNAME stopped PID=$PID"
+     else 
+        echo "$PROGNAME is not running PID=$PID" 
+     fi
+elif [ "$1" = "restart" ] ; then
+     if [ "" != "$PID" ] ; then
+        echo "$PROGNAME Stopping PID=$PID"
+	    kill -12 $PID
+            sleep 1
+	    PID=`ps -eaf | grep $PROGNAME | grep -v "grep" | awk '{print $2}'`
+        echo "$PROGNAME stopped PID=$PID"
+     else
+        echo "$PROGNAME is not running, Starting"
+     fi
+	    $PROGNAME > /dev/null 2>&1 &
+            sleep 1
+	    PID=`ps -eaf | grep $PROGNAME | grep -v "grep" | awk '{print $2}'`
+        echo "$PROGNAME was started PID=$PID"
+ fi
+}
+# End Function exescript
+
+# Script to start HB_Bridge and IPSC_Bridge
+if [ "$1" != "start" ] && [ "$1" != "stop" ] && [ "$1" != "restart" ] ; then
+    echo "Script to start HB_Bridge and IPSC_Bridge"
+    echo "Options for $0:"
+    echo " Variable 1"
+    echo "        start"
+    echo "        stop"
+    echo "        restart"
+    echo " Variable 2"
+    echo "       null - Start all"
+    echo "       ip - Start IPSC_Bridge" 
+    echo "       hb - Start HB_Bridge" 
+
+elif [ "$2" = "" ] ; then
+   hb $1
+   ip $1
+
+elif [ "$2" = "ip" ] ; then
+   ip $1
+
+elif [ "$2" = "hb" ] ; then
+   hb $1
+
+else 
+    echo " Variable 2"
+    echo "       null - Start all"
+    echo "       ip - Start IPSC_Bridge" 
+    echo "       hb - Start HB_Bridge" 
+
+fi
+
+unset ip
+unset hb
+unset exescript
+# End script

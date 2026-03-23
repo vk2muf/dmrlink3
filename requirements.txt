@@ -1,0 +1,4 @@
+twisted
+configparser
+bitstring
+bitarray
