@@ -26,7 +26,13 @@
 # Full imports
 import logging
 import pickle
+#script was written for Python 2, which handled integers and strings differently. 
+# In Python 3.13, we must explicitly define helper functions to convert integers into the specific byte-lengths required by the IPSC protocol
+def bytes_2(val):
+    return int(val).to_bytes(2, byteorder='big')
 
+def bytes_4(val):
+    return int(val).to_bytes(4, byteorder='big')
 # Function Imports
 from hmac import new as hmac_new
 from binascii import b2a_hex as ahex
